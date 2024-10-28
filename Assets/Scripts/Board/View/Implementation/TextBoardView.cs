@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Board.BoardState;
 using Board.Model;
@@ -15,9 +16,14 @@ namespace Board.View.Implementation
         [SerializeField] private InputField _inputField;
         [SerializeField] private Button _submitButton;
         
-        private void Start()
+        private void Awake()
         {
             _submitButton.onClick.AddListener(GetPlayerInput);
+        }
+        
+        private void OnDestroy()
+        {
+            _submitButton.onClick.RemoveListener(GetPlayerInput);
         }
         
         protected override Vector2Int? TryGetPlayerInputInternal()
@@ -67,6 +73,6 @@ namespace Board.View.Implementation
                     stringBuilder.AppendLine("\t -----------");
             }
             Debug.Log(stringBuilder.ToString());
-        }       
+        }
     }
 }

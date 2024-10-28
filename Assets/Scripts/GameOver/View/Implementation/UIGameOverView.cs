@@ -14,6 +14,11 @@ namespace GameOver.View.Implementation
         {
             _restartButton.onClick.AddListener(OnClick);
         }
+        
+        private void OnDestroy()
+        {
+            _restartButton.onClick.RemoveListener(OnClick);
+        }
 
         protected override void DrawInternal(MarkerType? winner)
         {
