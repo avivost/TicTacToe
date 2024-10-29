@@ -51,7 +51,7 @@ namespace Board.View.Implementation
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("~~~~~~~ Tic Tac Toe ~~~~~~~");
             ViewManager.GetInstance().LoadView(gameObject);
-            stringBuilder.AppendLine($"please choose Cordinets");
+            stringBuilder.AppendLine($"please choose coordinates");
             int rows = grid.GetLength(0);
             int columns = grid.GetLength(1);
             stringBuilder.AppendLine();
