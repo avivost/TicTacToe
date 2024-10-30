@@ -152,10 +152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8224878aa19f4d4c8e81ac20eeec0d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lengh: 3
+  _length: 3
   _width: 3
-  _boardView: {fileID: 8392864375992149758, guid: 51b69d76e51e0444cb989d7798b56de1, type: 3}
-  _gameOverView: {fileID: 7869078027677553968, guid: b79b98e4a00743b4dad14ae40df9760f, type: 3}
+  _boardViewPrefab: {fileID: -7418114503048515833, guid: 51b69d76e51e0444cb989d7798b56de1, type: 3}
+  _gameOverViewPrefab: {fileID: 6522220131489260818, guid: 4363b476ff2637d46ad0694bfcb4109e, type: 3}
 --- !u!4 &341602348
 Transform:
   m_ObjectHideFlags: 0

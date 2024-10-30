@@ -11,15 +11,16 @@ using GameOver.View.Abstract;
 using GameState;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameStateManager : MonoBehaviour
 {
    public static GameStateManager Instance { get; private set; }
    
-   [SerializeField] private int _lengh = 3;
+   [SerializeField] private int _length = 3;
    [SerializeField] private int _width = 3;
-   [SerializeField] private GameObject _boardView;
-   [SerializeField] private GameObject _gameOverView;
+   [SerializeField] private BaseBoardView _boardViewPrefab;
+   [SerializeField] private BaseGameOverView _gameOverViewPrefab;
    
    public MarkerType CurrentMarkerType {get; private set;}
    private IBoardController _boardController;
@@ -75,14 +76,12 @@ public class GameStateManager : MonoBehaviour
       
       _gameOverController = new GameOverController();
       
-      _boardView = Instantiate(_boardView, Vector3.zero, quaternion.identity);
-      _boardView.SetActive(false);
-      _boardViewScript = _boardView.GetComponent<BaseBoardView>();
+      _boardViewScript = Instantiate(_boardViewPrefab, Vector3.zero, quaternion.identity);
+      _boardViewScript.gameObject.SetActive(false);
       
-      _gameOverView = Instantiate(_gameOverView, Vector3.zero, quaternion.identity);
-      _gameOverView.SetActive(false);
+      _gameOverViewScript = Instantiate(_gameOverViewPrefab, Vector3.zero, quaternion.identity);
+      _gameOverViewPrefab.gameObject.SetActive(false);
       
-      _gameOverViewScript = _gameOverView.GetComponent<BaseGameOverView>();
       _gameOverViewScript.Initialize(_gameOverController);
       StartNewGame();
    }
@@ -106,15 +105,15 @@ public class GameStateManager : MonoBehaviour
    
    private void StartNewGame()
    {
-      BoardModel model = new BoardModel(_lengh, _width);
+      BoardModel model = new BoardModel(_length, _width);
       _boardController = new BoardController(model);
       _boardViewScript.Initialize(_boardController);
       
       _currentState = GameStateType.Active;
       CurrentMarkerType = MarkerType.X;
       
-      _gameOverView.SetActive(false);
-      _boardView.SetActive(true);
+      _gameOverViewScript.gameObject.SetActive(false);
+      _boardViewScript.gameObject.SetActive(true);
       _boardViewScript.Draw(_boardController.GetGrid());
    }
    
