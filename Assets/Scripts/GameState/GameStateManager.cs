@@ -31,23 +31,15 @@ public class GameStateManager : MonoBehaviour
    
    private void Awake()
    {
-      // there is no use to call init twice
-      if (Instance == this)
-      {
-         return;
-      }
-      
-      // we have yet to initialize the instance, so we do it
+      // if there is no instance, we initialize it
       if (Instance == null)
       {
          Initialize();
       }
-      
-      // if we got here it means that we have already initialized the instance, and this instance is not the one we created before.
-      // to ensure we truly have only one instance, we destroy the new one
-      else
+      // if this instance is not the original, we destroy it
+      else if (Instance != this)
       {
-         Destroy(this);
+         Destroy(gameObject);
       }
    }
    
