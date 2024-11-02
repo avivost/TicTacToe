@@ -28,9 +28,6 @@ namespace Board.View.Abstract
             }
             DrawBoardInternal(grid);
         }
-
-        protected abstract Vector2Int? TryGetPlayerInputInternal();
-        protected abstract void DrawBoardInternal(MarkerType?[,] model);
         
         protected  void GetPlayerInput()
         {
@@ -47,5 +44,8 @@ namespace Board.View.Abstract
 
             BoardController.TryPlaceInCell(playerInput.Value);
         }
+        
+        protected abstract Vector2Int? TryGetPlayerInputInternal();
+        protected abstract void DrawBoardInternal(MarkerType?[,] model);
     }
 }
