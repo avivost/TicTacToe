@@ -26,12 +26,14 @@ namespace Board.Controller.Implementation
             int length = dimensions.x;
             int width = dimensions.y;
             
+            // Ensure cell coordinates are within the board's range
             if (x < 0 || x >= length || y < 0 || y >= width)
             {
                 Debug.Log($"Invalid cell coordinates, x: {x}, y: {y}, length: {length}, width: {width}");
                 return false;
             }
             
+            // Check if the cell is empty.
             return _model.GetCellState(cellPosition) == null;
         }
 
@@ -41,8 +43,10 @@ namespace Board.Controller.Implementation
             {
                 return false;
             }
-            
+            // Place the marker
             _model.SetCellState(cellPosition, GameStateManager.Instance.CurrentMarkerType);
+            
+            // trigger the end-turn request.
             GameStateManager.Instance.ChangeState(new EndTurnRequest());
             return true;
         }
@@ -57,16 +61,25 @@ namespace Board.Controller.Implementation
             {
                 for (int j = 0; j < width; j++)
                 {
+                    // if even one cell contains a null aka it's empty, the board is not full.
+                    // and we can return false.
                     if (_model.GetCellState(new Vector2Int(i, j)) == null)
                     {
                         return false;
                     }
                 }
             }
-
+            
+            //if we got to this line of code, it means we didn't find any empty cells, so the board is full.
             return true;
         }
-
+        
+        
+        /// <summary>
+        /// Iterate through each cell on the board, attempting to find a winning line.
+        /// This method checks each cell to determine if it starts a line of markers (horizontal, vertical, or diagonal)
+        /// that meets the winning condition.
+        /// </summary>
         public MarkerType? TryGetWinner()
         {
             Vector2Int dimensions = _model.GetDimensions();
@@ -77,10 +90,17 @@ namespace Board.Controller.Implementation
             {
                 for (int j = 0; j < width; j++)
                 {
-                    MarkerType? winner = TryGetWinnerFromCell(new Vector2Int(i, j));
+                    Vector2Int cellPosition = new Vector2Int(i, j);
+                    // Skip empty cells.
+                    if (_model.GetCellState(cellPosition) == null)
+                    {
+                        continue;
+                    }
+                    // Attempt to find a winner starting from the current cell.
+                    MarkerType? winner = TryGetWinnerFromCell(cellPosition);
                     if (winner != null)
                     {
-                        return winner;
+                        return winner; // Return the winner marker type if found.
                     }
                 }
             }
@@ -105,7 +125,11 @@ namespace Board.Controller.Implementation
 
             return grid;
         }
-
+        
+        /// <summary>
+        /// Check for any winning line (horizontal, vertical, or diagonal) starting from a given cell.
+        /// This method evaluates all possible directions to see if a continuous line of identical markers is formed.
+        /// </summary>
         private MarkerType? TryGetWinnerFromCell(Vector2Int cellPosition)
         {
             MarkerType? state = _model.GetCellState(cellPosition);
@@ -151,7 +175,11 @@ namespace Board.Controller.Implementation
 
             return null;
         }
-        
+
+        /// <summary>
+        ///  Generate a sequence of cell positions in a straight line based on start points and increments.
+        ///  This is useful for constructing potential winning lines in horizontal, vertical, or diagonal directions.
+        /// </summary>
         List<Vector2Int> GetPositions(int amountOfCells, int xStart, int xIncrement, int yStart, int yIncrement)
         {
             List<Vector2Int> positions = new List<Vector2Int>();
@@ -162,17 +190,21 @@ namespace Board.Controller.Implementation
             return positions;
         }
         
+        
+        /// <summary>
+        ///  Verify if all cells in a given line have the same marker type, indicating a winning line.
+        /// </summary>
         private bool IsWinningLine(MarkerType? state, List<Vector2Int> positions)
         {
             foreach (var pos in positions)
             {
                 if (_model.GetCellState(pos) != state)
                 {
-                    return false;
+                    return false; // Return false if any cell does not match the required state.
                 }
             }
 
-            return true;
+            return true; // Return true if all cells in the line have the same marker type.
         }
     }
 }
