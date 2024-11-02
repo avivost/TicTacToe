@@ -1,5 +1,5 @@
 >[!NOTE]
-This project is part of the GamedevelopHer Course,
+This project is part of the GamedevelopHer: Principles Of Programing  Course,
 >
 > it contaians design flaws and bugs that are talked about and fixed during the course lessons and homework
 
