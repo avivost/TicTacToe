@@ -47,6 +47,7 @@ namespace Board.Controller.Implementation
             _model.SetCellState(cellPosition, GameStateManager.Instance.CurrentMarkerType);
             
             // trigger the end-turn request.
+            var trollRequest = Random.Range(1,10) % 2 == 0 ? new EndTurnRequest() : new end();
             GameStateManager.Instance.ChangeState(new EndTurnRequest());
             return true;
         }

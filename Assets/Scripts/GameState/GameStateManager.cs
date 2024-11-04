@@ -71,10 +71,6 @@ public class GameStateManager : MonoBehaviour
       _boardViewScript = Instantiate(_boardViewPrefab, Vector3.zero, quaternion.identity);
       _boardViewScript.gameObject.SetActive(false);
       
-      _gameOverViewScript = Instantiate(_gameOverViewPrefab, Vector3.zero, quaternion.identity);
-      _gameOverViewPrefab.gameObject.SetActive(false);
-      
-      _gameOverViewScript.Initialize(_gameOverController);
       StartNewGame();
    }
    
@@ -104,7 +100,6 @@ public class GameStateManager : MonoBehaviour
       _currentState = GameStateType.Active;
       CurrentMarkerType = MarkerType.X;
       
-      _gameOverViewScript.gameObject.SetActive(false);
       _boardViewScript.gameObject.SetActive(true);
       _boardViewScript.Draw(_boardController.GetGrid());
    }
