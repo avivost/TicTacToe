@@ -59,6 +59,13 @@ public class GameStateManager : MonoBehaviour
             StartNewGame();
             return;
          }
+         
+         case EndGameRequest endGameRequestedEvent:
+         {
+            Debug.Log("ByeBye");
+            Application.Quit();
+            return;
+         } 
       }
    }
    
