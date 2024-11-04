@@ -1,5 +1,6 @@
 ﻿using Board.BoardState;
 using Board.View.Abstract;
+using GameOver.Requests;
 using GameOver.View.Abstract;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ namespace GameOver.View.Implementation
                 Debug.Log("Draw");
             }
             Debug.Log("Game Over");
-            Application.Quit();
+            GameStateManager.Instance.ChangeState(new EndGameRequest());
         }
     }
 }
