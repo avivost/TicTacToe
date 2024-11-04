@@ -4,6 +4,8 @@ using Board.BoardState;
 using Board.Controller.Abstract;
 using Board.Model;
 using Board.Requests;
+using GameOver.Requests;
+using GameState;
 using UnityEngine;
 
 namespace Board.Controller.Implementation
@@ -47,8 +49,17 @@ namespace Board.Controller.Implementation
             _model.SetCellState(cellPosition, GameStateManager.Instance.CurrentMarkerType);
             
             // trigger the end-turn request.
-            var trollRequest = Random.Range(1,10) % 2 == 0 ? new EndTurnRequest() : new end();
-            GameStateManager.Instance.ChangeState(new EndTurnRequest());
+            BaseRequest trollRequest;
+            if (Random.Range(0,11) % 2 == 0)
+            {
+                trollRequest = new EndTurnRequest();
+            }
+            else
+            {
+                trollRequest = new EndGameRequest();
+            }
+            
+            GameStateManager.Instance.ChangeState(trollRequest);
             return true;
         }
 
