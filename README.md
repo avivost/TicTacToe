@@ -19,3 +19,4 @@ This project follows two key design principles:
    - Only the View classes inherit from `MonoBehaviour`, keeping the business logic separate and maintaining clean design patterns.  
    - Occasionally, some logical components may inherit from `MonoBehaviour` to support certain design patterns effectively.
 
+for more info check the please check the [wiki](https://github.com/avivost/TicTacToe/wiki)
