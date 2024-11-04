@@ -36,16 +36,19 @@ namespace Board.View.Abstract
                 throw new System.Exception("View is not initialized");
             }
             
-            Vector2Int? playerInput = null;
-            while (playerInput == null)
+            Vector2Int? playerInput = TryGetPlayerInputInternal();
+            if (playerInput != null)
             {
-                playerInput = TryGetPlayerInputInternal();
+                BoardController.TryPlaceInCell(playerInput.Value);
             }
-
-            BoardController.TryPlaceInCell(playerInput.Value);
+            else
+            {
+                DrawInvalidInput();
+            }
         }
         
         protected abstract Vector2Int? TryGetPlayerInputInternal();
         protected abstract void DrawBoardInternal(MarkerType?[,] model);
+        protected abstract void DrawInvalidInput();
     }
 }

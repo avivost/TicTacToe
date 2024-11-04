@@ -38,7 +38,6 @@ namespace Board.View.Implementation
             }
             if (!int.TryParse(split[0], out int x) || !int.TryParse(split[1], out int y))
             {
-                Debug.Log("Invalid input, please enter two numbers separated by a comma");
                 return null;
             }
 
@@ -73,6 +72,12 @@ namespace Board.View.Implementation
                     stringBuilder.AppendLine("\t -----------");
             }
             Debug.Log(stringBuilder.ToString());
+        }
+
+        protected override void DrawInvalidInput()
+        {
+            Debug.Log("Invalid input, please enter two numbers separated by a comma");
+            _inputField.text = "";
         }
     }
 }
