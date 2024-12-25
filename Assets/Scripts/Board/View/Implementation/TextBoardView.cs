@@ -62,14 +62,26 @@ namespace Board.View.Implementation
                 stringBuilder.Append($"{row}\t");
                 for (int col = 0; col < columns; col++)
                 {
-                    string cellValue = grid[row, col] == null ? "~" : grid[row, col].ToString();
+                    string cellValue;
+                    if (grid[row, col] == null)
+                    {
+                        cellValue = "~";
+                    }
+                    else
+                    {
+                        cellValue = grid[row, col].ToString();
+                    }
                     stringBuilder.Append($"{cellValue}");
                     if (col < rows - 1)
+                    {
                         stringBuilder.Append("|");
+                    }
                 }
                 stringBuilder.AppendLine();
                 if (row < rows - 1)
+                {
                     stringBuilder.AppendLine("\t -----------");
+                }
             }
             Debug.Log(stringBuilder.ToString());
         }
