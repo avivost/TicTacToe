@@ -64,9 +64,13 @@ namespace Board.View.Implementation
                 {
                     string cellValue;
                     if (grid[col, row] == null)
+                    {
                         cellValue = "~";
+                    }
                     else
+                    {
                         cellValue = grid[col, row].ToString();
+                    }
                     stringBuilder.Append($"{cellValue}");
                     if (col < rows - 1)
                         stringBuilder.Append("|");
