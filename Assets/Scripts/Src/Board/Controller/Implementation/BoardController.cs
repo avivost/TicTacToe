@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Board.Controller.Implementation
 {
    
-    class BoardController : IBoardController
+    public class BoardController : IBoardController
     {
         private readonly BoardModel _model;
         
