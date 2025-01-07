@@ -41,7 +41,8 @@ public class GameStateManager : MonoBehaviour
    private void Initialize()
    {
       Instance = this;
-      
+      QualitySettings.vSyncCount = 0;
+      Application.targetFrameRate = 60;
       
       _boardView = Instantiate(_boardViewPrefab, Vector3.zero, quaternion.identity);
       _boardView.gameObject.SetActive(false);
