@@ -1,45 +1,43 @@
 ﻿using Board.BoardState;
 using Board.Controller.Abstract;
 using Board.Model;
+using Src.Board.Events;
 using UnityEngine;
 
 namespace Board.View.Abstract
 {
-    public abstract class BaseBoardView : MonoBehaviour
+    public interface IBoardViewSubject
     {
-        public bool IsInitialized => _isInitialized;
-        protected IBoardController BoardController { get; private set; }
-        
-        private bool _isInitialized = false;
-        
-
-
-        public void Initialize(IBoardController boardController)
-        {
-            _isInitialized = true;
-            BoardController = boardController;
-        }
-
+        delegate void MarkPlacementClicked(MarkPlacementClickedEvent markPlacedEvent);
+        void RegisterOnMarkPlacementClicked( MarkPlacementClicked handler);
+        void UnregisterOnMarkPlacementClicked( MarkPlacementClicked handler);
+    }
+    public abstract class BaseBoardView : MonoBehaviour, IBoardViewSubject
+    {
+        private event IBoardViewSubject.MarkPlacementClicked OnMarkPlacementClicked;
         public void Draw(MarkerType?[,] grid)
         {
-            if (!IsInitialized)
-            {
-                throw new System.Exception("View is not initialized");
-            }
+         
             DrawBoardInternal(grid);
+        }
+        
+        public void RegisterOnMarkPlacementClicked(IBoardViewSubject.MarkPlacementClicked handler)
+        {
+            OnMarkPlacementClicked += handler;
+        }
+
+        public void UnregisterOnMarkPlacementClicked(IBoardViewSubject.MarkPlacementClicked handler)
+        {
+            OnMarkPlacementClicked -= handler;
         }
         
         protected  void GetPlayerInput()
         {
-            if (!IsInitialized)
-            {
-                throw new System.Exception("View is not initialized");
-            }
-            
             Vector2Int? playerInput = TryGetPlayerInputInternal();
             if (playerInput != null)
             {
-                BoardController.TryPlaceInCell(playerInput.Value);
+                MarkPlacementClickedEvent markPlacedEvent = new MarkPlacementClickedEvent(playerInput.Value);
+                OnMarkPlacementClicked?.Invoke(markPlacedEvent);
             }
             else
             {

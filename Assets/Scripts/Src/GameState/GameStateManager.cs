@@ -2,16 +2,12 @@ using Board.BoardState;
 using Board.Controller.Abstract;
 using Board.Controller.Implementation;
 using Board.Model;
-using Board.Requests;
 using Board.View.Abstract;
-using GameOver.Controller.Abstract;
-using GameOver.Controller.Implementation;
-using GameOver.Requests;
 using GameOver.View.Abstract;
 using GameState;
+using Src.Board.Events;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class GameStateManager : MonoBehaviour
 {
@@ -24,10 +20,9 @@ public class GameStateManager : MonoBehaviour
    
    public MarkerType CurrentMarkerType {get; private set;}
    private IBoardController _boardController;
-   private IGameOverController _gameOverController;
    private GameStateType _currentState;
-   private BaseBoardView _boardViewScript;
-   private BaseGameOverView _gameOverViewScript;
+   private BaseBoardView _boardView;
+   private BaseGameOverView _gameOverView;
    
    private void Awake()
    {
@@ -43,49 +38,37 @@ public class GameStateManager : MonoBehaviour
       }
    }
    
-   public void ChangeState( BaseRequest baseRequest)
-   {
-      
-      
-      switch (baseRequest)
-      {
-         case EndTurnRequest turnEndedEvent:
-         {
-            HandleTurnEnded();
-            break;
-         }
-         case StartNewGameRequest newGameRequestedEvent:
-         {
-            StartNewGame();
-            return;
-         }
-         
-         case EndGameRequest endGameRequestedEvent:
-         {
-            Debug.Log("ByeBye");
-            Application.Quit();
-            return;
-         } 
-      }
-   }
-   
    private void Initialize()
    {
       Instance = this;
       
-      _gameOverController = new GameOverController();
       
-      _boardViewScript = Instantiate(_boardViewPrefab, Vector3.zero, quaternion.identity);
-      _boardViewScript.gameObject.SetActive(false);
+      _boardView = Instantiate(_boardViewPrefab, Vector3.zero, quaternion.identity);
+      _boardView.gameObject.SetActive(false);
       
-      _gameOverViewScript = Instantiate(_gameOverViewPrefab, Vector3.zero, quaternion.identity);
+      _gameOverView = Instantiate(_gameOverViewPrefab, Vector3.zero, quaternion.identity);
+      _gameOverView.RegisterOnGameOverClicked(HandleGameOverClicked);
+      _gameOverView.RegisterOnRestartClicked(HandleRestartClicked);
       _gameOverViewPrefab.gameObject.SetActive(false);
       
-      _gameOverViewScript.Initialize(_gameOverController);
       StartNewGame();
    }
    
-   private void HandleTurnEnded()
+   private void StartNewGame()
+   {
+      BoardModel model = new BoardModel(_length, _width);
+      _boardController = new BoardController(model, _boardView);
+      model.RegisterGridChange(HandleTurnEnded);
+      
+      _currentState = GameStateType.Active;
+      CurrentMarkerType = MarkerType.X;
+      
+      _gameOverView.gameObject.SetActive(false);
+      _boardView.gameObject.SetActive(true);
+      _boardView.Draw(_boardController.GetGrid());
+   }
+   
+   private void HandleTurnEnded(MarkPlacedEvent markPlacedEvent)
    {
       MarkerType? winner = _boardController.TryGetWinner();
       if (winner == null && !_boardController.IsBoardFull())
@@ -94,27 +77,32 @@ public class GameStateManager : MonoBehaviour
             CurrentMarkerType = MarkerType.O;
          else
             CurrentMarkerType = MarkerType.X;
-         _boardViewScript.Draw(_boardController.GetGrid());
+         _boardView.Draw(markPlacedEvent.CurrentState);
          return;
       }
       
       _currentState = GameStateType.GameOver;
-      _gameOverViewScript.Draw(winner);
+      _gameOverView.Draw(winner);
    }
-   
-   private void StartNewGame()
+   private void HandleGameOverClicked()
    {
-      BoardModel model = new BoardModel(_length, _width);
-      _boardController = new BoardController(model);
-      _boardViewScript.Initialize(_boardController);
-      
-      _currentState = GameStateType.Active;
-      CurrentMarkerType = MarkerType.X;
-      
-      _gameOverViewScript.gameObject.SetActive(false);
-      _boardViewScript.gameObject.SetActive(true);
-      _boardViewScript.Draw(_boardController.GetGrid());
+      Debug.Log("ByeBye");
+      Application.Quit();
+      return;
    }
-   
-   
+   private void HandleRestartClicked()
+   {
+      StartNewGame();
+   }
+
+   private void OnDestroy()
+   {
+      if (Instance != this)
+      {
+         return;
+      }
+      
+      _gameOverView.UnregisterOnGameOverClicked(HandleGameOverClicked);
+      _gameOverView.UnregisterOnRestartClicked(HandleRestartClicked);
+   }
 }

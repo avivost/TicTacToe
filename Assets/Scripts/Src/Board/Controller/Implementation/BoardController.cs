@@ -3,7 +3,8 @@ using System.Linq;
 using Board.BoardState;
 using Board.Controller.Abstract;
 using Board.Model;
-using Board.Requests;
+using Board.View.Abstract;
+using Src.Board.Events;
 using UnityEngine;
 
 namespace Board.Controller.Implementation
@@ -13,42 +14,21 @@ namespace Board.Controller.Implementation
     {
         private readonly BoardModel _model;
         
-        public BoardController(BoardModel model)
+        public BoardController(BoardModel model, IBoardViewSubject boardViewSubject)
         {
             _model = model;
-        }
-        
-        public bool IsPlaceableInCell(Vector2Int cellPosition)
-        {
-            int x = cellPosition.x;
-            int y = cellPosition.y;
-            Vector2Int dimensions = _model.GetDimensions();
-            int length = dimensions.x;
-            int width = dimensions.y;
-            
-            // Ensure cell coordinates are within the board's range
-            if (x < 0 || x >= length || y < 0 || y >= width)
-            {
-                Debug.Log($"Invalid cell coordinates, x: {x}, y: {y}, length: {length}, width: {width}");
-                return false;
-            }
-            
-            // Check if the cell is empty.
-            return _model.GetCellState(cellPosition) == null;
+            boardViewSubject.RegisterOnMarkPlacementClicked(TryPlaceInCell);
         }
 
-        public bool TryPlaceInCell(Vector2Int cellPosition)
+        public void TryPlaceInCell(MarkPlacementClickedEvent placementClickedEvent)
         {
+            Vector2Int cellPosition = placementClickedEvent.Position;
             if (!IsPlaceableInCell(cellPosition))
             {
-                return false;
+                return;
             }
             // Place the marker
             _model.SetCellState(cellPosition, GameStateManager.Instance.CurrentMarkerType);
-            
-            // trigger the end-turn request.
-            GameStateManager.Instance.ChangeState(new EndTurnRequest());
-            return true;
         }
 
         public bool IsBoardFull()
@@ -126,6 +106,25 @@ namespace Board.Controller.Implementation
             return grid;
         }
         
+        private bool IsPlaceableInCell(Vector2Int cellPosition)
+        {
+            int x = cellPosition.x;
+            int y = cellPosition.y;
+            Vector2Int dimensions = _model.GetDimensions();
+            int length = dimensions.x;
+            int width = dimensions.y;
+            
+            // Ensure cell coordinates are within the board's range
+            if (x < 0 || x >= length || y < 0 || y >= width)
+            {
+                Debug.Log($"Invalid cell coordinates, x: {x}, y: {y}, length: {length}, width: {width}");
+                return false;
+            }
+            
+            // Check if the cell is empty.
+            return _model.GetCellState(cellPosition) == null;
+        }
+        
         /// <summary>
         /// Check for any winning line (horizontal, vertical, or diagonal) starting from a given cell.
         /// This method evaluates all possible directions to see if a continuous line of identical markers is formed.
@@ -144,8 +143,7 @@ namespace Board.Controller.Implementation
 
             int x = cellPosition.x;
             int y = cellPosition.y;
-
-
+           
             List<Vector2Int> horizontalPositions = GetPositions(amountOfCells:length, xStart:0, xIncrement:1, yStart:y, yIncrement:0);
             if (IsWinningLine(state, horizontalPositions))
             {

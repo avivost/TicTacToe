@@ -304,7 +304,7 @@ MonoBehaviour:
   _length: 3
   _width: 3
   _boardViewPrefab: {fileID: -7418114503048515833, guid: 51b69d76e51e0444cb989d7798b56de1, type: 3}
-  _gameOverViewPrefab: {fileID: 2570301976239408361, guid: b79b98e4a00743b4dad14ae40df9760f, type: 3}
+  _gameOverViewPrefab: {fileID: 6522220131489260818, guid: 4363b476ff2637d46ad0694bfcb4109e, type: 3}
 --- !u!4 &2131429567
 Transform:
   m_ObjectHideFlags: 0

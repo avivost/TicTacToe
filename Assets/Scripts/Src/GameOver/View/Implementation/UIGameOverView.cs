@@ -9,15 +9,18 @@ namespace GameOver.View.Implementation
     public class UIGameOverView  : BaseGameOverView
     {
         [SerializeField] private Button _restartButton;
+        [SerializeField] private Button _gameOverButton;
 
         private void Awake()
         {
-            _restartButton.onClick.AddListener(OnClick);
+            _restartButton.onClick.AddListener(OnGameOverClicked);
+            _gameOverButton.onClick.AddListener(OnRestartClicked);
         }
         
         private void OnDestroy()
         {
-            _restartButton.onClick.RemoveListener(OnClick);
+            _restartButton.onClick.RemoveListener(OnGameOverClicked);
+            _gameOverButton.onClick.RemoveListener(OnRestartClicked);
         }
 
         protected override void DrawInternal(MarkerType? winner)
@@ -25,9 +28,14 @@ namespace GameOver.View.Implementation
             ViewManager.GetInstance().LoadView(gameObject);
         }
 
-        private void OnClick()
+        private void OnGameOverClicked()
         {
-            GameOverController.RestartGame();
+            InvokeOnGameOverClicked();
+        }
+        
+        private void OnRestartClicked()
+        {
+            InvokeOnRestartClicked();
         }
     }
 }

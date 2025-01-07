@@ -1,11 +1,14 @@
 ﻿using Board.BoardState;
+using Src.Board.Events;
 using UnityEngine;
 
 namespace Board.Model
 {
-    public class BoardModel
+    public class BoardModel : IBoardSubject
     {
         private MarkerType?[,] _grid;
+        
+        private event IBoardSubject.GridChangeHandler GridChangeHandler;
 
         public BoardModel(int length, int width)
         {
@@ -17,6 +20,7 @@ namespace Board.Model
                int x = cellPosition.x;
                int y = cellPosition.y;
                _grid[x, y] = state;
+               GridChangeHandler?.Invoke(new MarkPlacedEvent(cellPosition, _grid));
         }
         
         public MarkerType? GetCellState(Vector2Int cellPosition)
@@ -38,7 +42,16 @@ namespace Board.Model
         {
             return _grid.GetLength(1);
         }
-        
-       
+
+
+        public void RegisterGridChange(IBoardSubject.GridChangeHandler handler)
+        {
+            GridChangeHandler += handler;
+        }
+
+        public void UnregisterGridChange(IBoardSubject.GridChangeHandler handler)
+        {
+            GridChangeHandler -= handler;
+        }
     }
 }
